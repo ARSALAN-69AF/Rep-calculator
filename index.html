@@ -1,0 +1,998 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>REPS | Workout Tracker</title>
+  <style>
+    :root {
+      --bg: #090909;
+      --panel: rgba(255, 255, 255, 0.065);
+      --panel-strong: rgba(255, 255, 255, 0.095);
+      --line: rgba(255, 255, 255, 0.12);
+      --text: #f7f7f7;
+      --muted: #a1a1aa;
+      --accent: #c7ff5f;
+      --accent-2: #4bd3c2;
+      --dark: #050505;
+      --radius: 26px;
+      --shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 18% 8%, rgba(199, 255, 95, 0.14), transparent 28rem),
+        radial-gradient(circle at 86% 10%, rgba(75, 211, 194, 0.12), transparent 30rem),
+        var(--bg);
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button, input, select {
+      font: inherit;
+    }
+
+    .shell {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      border-bottom: 1px solid var(--line);
+      background: rgba(9, 9, 9, 0.78);
+      backdrop-filter: blur(18px);
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 70px;
+      gap: 18px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 999px;
+      color: var(--dark);
+      background: var(--accent);
+      box-shadow: 0 0 36px rgba(199, 255, 95, 0.24);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .nav-link {
+      border: 0;
+      color: var(--muted);
+      cursor: pointer;
+      background: transparent;
+      border-radius: 999px;
+      padding: 10px 14px;
+      transition: 180ms ease;
+    }
+
+    .nav-link:hover, .nav-link.active {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-height: 52px;
+      padding: 0 24px;
+      border: 0;
+      border-radius: 999px;
+      color: var(--dark);
+      background: var(--accent);
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 180ms ease, background 180ms ease, border-color 180ms ease;
+      box-shadow: 0 0 40px rgba(199, 255, 95, 0.16);
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      background: #d4ff81;
+    }
+
+    .btn.secondary {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--line);
+      box-shadow: none;
+    }
+
+    .section {
+      display: none;
+      padding: 46px 0 80px;
+      animation: rise 420ms ease both;
+    }
+
+    .section.active {
+      display: block;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 0.9fr) minmax(320px, 1.1fr);
+      align-items: center;
+      min-height: calc(100vh - 70px);
+      gap: 42px;
+      padding: 54px 0;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      width: fit-content;
+      border: 1px solid rgba(199, 255, 95, 0.28);
+      border-radius: 999px;
+      padding: 8px 12px;
+      color: var(--accent);
+      background: rgba(199, 255, 95, 0.08);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    h1, h2, h3, p {
+      margin: 0;
+    }
+
+    h1 {
+      margin-top: 22px;
+      font-size: clamp(58px, 10vw, 116px);
+      line-height: 0.9;
+      letter-spacing: 0;
+    }
+
+    .hero-copy {
+      margin-top: 22px;
+      max-width: 580px;
+      color: #d4d4d8;
+      font-size: clamp(18px, 2vw, 23px);
+      line-height: 1.55;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 34px;
+    }
+
+    .device {
+      position: relative;
+      overflow: hidden;
+      min-height: 560px;
+      border: 1px solid var(--line);
+      border-radius: 38px;
+      padding: 26px;
+      background:
+        radial-gradient(circle at 38% 14%, rgba(199, 255, 95, 0.24), transparent 18rem),
+        linear-gradient(145deg, #171717, #050505 72%);
+      box-shadow: var(--shadow);
+      animation: float 5s ease-in-out infinite;
+    }
+
+    .device-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .live-pill {
+      color: var(--dark);
+      background: var(--accent);
+      border-radius: 999px;
+      padding: 9px 14px;
+      font-weight: 800;
+      font-size: 13px;
+    }
+
+    .mock-list {
+      display: grid;
+      gap: 14px;
+      margin-top: 30px;
+    }
+
+    .mock-item, .card, .metric, .exercise-card, .set-row, .summary-card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+      backdrop-filter: blur(18px);
+    }
+
+    .mock-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px;
+      transition: transform 200ms ease;
+    }
+
+    .mock-item:hover, .card:hover, .exercise-card:hover {
+      transform: translateY(-3px);
+    }
+
+    .volume-panel {
+      position: absolute;
+      left: 26px;
+      right: 26px;
+      bottom: 26px;
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      padding: 22px;
+      background: rgba(0, 0, 0, 0.42);
+      backdrop-filter: blur(20px);
+    }
+
+    .bar {
+      overflow: hidden;
+      height: 9px;
+      margin-top: 16px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    .bar span {
+      display: block;
+      width: 72%;
+      height: 100%;
+      border-radius: inherit;
+      background: var(--accent);
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      padding-bottom: 72px;
+    }
+
+    .card {
+      padding: 26px;
+      transition: transform 200ms ease;
+    }
+
+    .icon {
+      display: grid;
+      place-items: center;
+      width: 48px;
+      height: 48px;
+      border-radius: 999px;
+      color: var(--accent);
+      background: rgba(199, 255, 95, 0.1);
+      font-size: 22px;
+    }
+
+    .card h3, .exercise-card h3 {
+      margin-top: 22px;
+      font-size: 22px;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .card p {
+      margin-top: 12px;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .cta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 24px;
+      margin-bottom: 68px;
+      border: 1px solid var(--line);
+      border-radius: 34px;
+      padding: 34px;
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .page-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 28px;
+    }
+
+    .page-title {
+      margin-top: 16px;
+      font-size: clamp(38px, 6vw, 58px);
+      line-height: 1;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .metric {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 24px;
+    }
+
+    .metric strong {
+      display: block;
+      margin-top: 8px;
+      font-size: 32px;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .panel-title {
+      padding: 24px 24px 0;
+      font-size: 20px;
+      font-weight: 800;
+    }
+
+    .panel-body {
+      display: grid;
+      gap: 12px;
+      padding: 20px 24px 24px;
+    }
+
+    .list-item {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 16px;
+      background: rgba(255, 255, 255, 0.045);
+    }
+
+    .tag {
+      width: fit-content;
+      align-self: start;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 7px 11px;
+      color: var(--muted);
+      background: rgba(255, 255, 255, 0.05);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .workout-grid {
+      display: grid;
+      grid-template-columns: 0.85fr 1.15fr;
+      gap: 16px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 9px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    select, input {
+      width: 100%;
+      min-height: 54px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      outline: 0;
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.075);
+      padding: 0 16px;
+    }
+
+    option {
+      color: var(--text);
+      background: #090909;
+    }
+
+    .exercise-focus {
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      padding: 22px;
+      background: rgba(0, 0, 0, 0.24);
+    }
+
+    .exercise-focus h2 {
+      margin-top: 8px;
+      font-size: 32px;
+    }
+
+    .mini-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .stepper {
+      border: 1px solid var(--line);
+      border-radius: 26px;
+      padding: 16px;
+      background: rgba(255, 255, 255, 0.045);
+    }
+
+    .stepper-controls {
+      display: grid;
+      grid-template-columns: 52px 1fr 52px;
+      align-items: center;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .round-btn {
+      display: grid;
+      place-items: center;
+      width: 52px;
+      height: 52px;
+      border: 0;
+      border-radius: 999px;
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.1);
+      cursor: pointer;
+      font-size: 22px;
+      transition: 180ms ease;
+    }
+
+    .round-btn:hover {
+      background: rgba(255, 255, 255, 0.16);
+      transform: translateY(-1px);
+    }
+
+    .step-value {
+      text-align: center;
+      font-size: 34px;
+      font-weight: 850;
+    }
+
+    .stack {
+      display: grid;
+      gap: 16px;
+    }
+
+    .empty {
+      display: grid;
+      place-items: center;
+      min-height: 220px;
+      border: 1px dashed rgba(255, 255, 255, 0.18);
+      border-radius: 26px;
+      color: var(--muted);
+      text-align: center;
+      padding: 22px;
+    }
+
+    .set-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 16px;
+      animation: rise 260ms ease both;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .summary-card {
+      padding: 16px;
+      background: rgba(0, 0, 0, 0.22);
+    }
+
+    .summary-card strong {
+      display: block;
+      margin-top: 8px;
+      font-size: 24px;
+    }
+
+    .library-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .exercise-card {
+      padding: 24px;
+      transition: transform 200ms ease;
+    }
+
+    .exercise-top {
+      display: flex;
+      align-items: start;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    footer {
+      border-top: 1px solid var(--line);
+      padding: 28px 16px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    @keyframes rise {
+      from {
+        opacity: 0;
+        transform: translateY(14px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-8px);
+      }
+    }
+
+    @media (max-width: 900px) {
+      .hero, .dashboard-grid, .workout-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .features, .grid-3, .library-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .device {
+        min-height: 500px;
+      }
+
+      .page-head, .cta {
+        align-items: start;
+        flex-direction: column;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .nav-inner {
+        align-items: stretch;
+        flex-direction: column;
+        padding: 12px 0;
+      }
+
+      .nav-links {
+        overflow-x: auto;
+        padding-bottom: 4px;
+      }
+
+      .nav-link {
+        white-space: nowrap;
+      }
+
+      .btn {
+        width: 100%;
+      }
+
+      .hero-actions .btn {
+        width: 100%;
+      }
+
+      .summary-grid, .mini-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .section {
+        padding-top: 28px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="navbar">
+    <div class="shell nav-inner">
+      <a class="brand" href="#home" data-route="home">
+        <span class="brand-mark">R</span>
+        <span>REPS</span>
+      </a>
+      <nav class="nav-links" aria-label="Primary">
+        <button class="nav-link active" data-route="home">Home</button>
+        <button class="nav-link" data-route="dashboard">Dashboard</button>
+        <button class="nav-link" data-route="workout">Workout</button>
+        <button class="nav-link" data-route="library">Library</button>
+      </nav>
+      <button class="btn" data-route="workout">Start Workout</button>
+    </div>
+  </header>
+
+  <main>
+    <section id="home" class="section active">
+      <div class="shell hero">
+        <div>
+          <span class="eyebrow">Frontend-only workout tracker</span>
+          <h1>REPS</h1>
+          <p class="hero-copy">A sharp local workout app for logging sets, reviewing volume, and keeping the next lift obvious.</p>
+          <div class="hero-actions">
+            <button class="btn" data-route="workout">Start Workout</button>
+            <button class="btn secondary" data-route="dashboard">View Dashboard</button>
+          </div>
+        </div>
+
+        <div class="device" aria-label="Workout preview">
+          <div class="device-row">
+            <div>
+              <p class="muted">Today</p>
+              <h2>Upper Strength</h2>
+            </div>
+            <span class="live-pill">Live</span>
+          </div>
+          <div class="mock-list">
+            <div class="mock-item"><div><strong>Bench Press</strong><p class="muted">4 sets planned</p></div><span>+</span></div>
+            <div class="mock-item"><div><strong>Lat Pulldown</strong><p class="muted">3 sets planned</p></div><span>+</span></div>
+            <div class="mock-item"><div><strong>Shoulder Press</strong><p class="muted">3 sets planned</p></div><span>+</span></div>
+          </div>
+          <div class="volume-panel">
+            <p class="muted">Weekly volume</p>
+            <h2>28,240 kg</h2>
+            <div class="bar"><span></span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="shell features">
+        <article class="card">
+          <span class="icon">+</span>
+          <h3>Log sets fast</h3>
+          <p>Adjust weight and reps with simple controls built for training rhythm.</p>
+        </article>
+        <article class="card">
+          <span class="icon">#</span>
+          <h3>See volume clearly</h3>
+          <p>Track sets, reps, and workload without losing focus mid-session.</p>
+        </article>
+        <article class="card">
+          <span class="icon">*</span>
+          <h3>Stay consistent</h3>
+          <p>Review recent workouts and keep your weekly momentum visible.</p>
+        </article>
+      </div>
+
+      <div class="shell cta">
+        <div>
+          <span class="eyebrow">Ready when you are</span>
+          <h2 class="page-title">Start logging the next set.</h2>
+        </div>
+        <button class="btn" data-route="workout">Start Workout</button>
+      </div>
+    </section>
+
+    <section id="dashboard" class="section">
+      <div class="shell">
+        <div class="page-head">
+          <div>
+            <span class="eyebrow">Dashboard</span>
+            <h2 class="page-title">Training overview</h2>
+            <p class="muted">Dummy metrics for today's work, recent sessions, and weekly progress.</p>
+          </div>
+        </div>
+
+        <div class="grid-3">
+          <article class="metric"><div><p class="muted">Total Workouts</p><strong>48</strong></div><span class="icon">T</span></article>
+          <article class="metric"><div><p class="muted">Weekly Volume</p><strong>28,240 kg</strong></div><span class="icon">V</span></article>
+          <article class="metric"><div><p class="muted">Workout Streak</p><strong>6 days</strong></div><span class="icon">S</span></article>
+        </div>
+
+        <div class="dashboard-grid">
+          <article class="card">
+            <h3 class="panel-title">Today's Workout</h3>
+            <div class="panel-body" id="todayWorkout"></div>
+          </article>
+          <article class="card">
+            <h3 class="panel-title">Recent Workouts</h3>
+            <div class="panel-body" id="recentWorkouts"></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="workout" class="section">
+      <div class="shell">
+        <div class="page-head">
+          <div>
+            <span class="eyebrow">Workout</span>
+            <h2 class="page-title">Workout session</h2>
+            <p class="muted">Choose an exercise, tune weight and reps, then save sets as the summary updates.</p>
+          </div>
+        </div>
+
+        <div class="workout-grid">
+          <article class="card stack">
+            <div>
+              <label for="exerciseSelect">Select exercise</label>
+              <select id="exerciseSelect"></select>
+            </div>
+
+            <div class="exercise-focus">
+              <p class="muted">Exercise Name</p>
+              <h2 id="exerciseName">Bench Press</h2>
+              <p class="muted" id="exerciseMeta">Chest - Barbell</p>
+            </div>
+
+            <div class="mini-grid">
+              <div class="summary-card"><p class="muted">Current Set</p><strong id="currentSet">1</strong></div>
+              <div class="summary-card"><p class="muted">Saved Sets</p><strong id="savedSetCount">0</strong></div>
+            </div>
+
+            <div class="stepper">
+              <p class="muted">Weight</p>
+              <div class="stepper-controls">
+                <button class="round-btn" id="weightMinus" aria-label="Decrease weight">-</button>
+                <div class="step-value"><span id="weightValue">80</span> kg</div>
+                <button class="round-btn" id="weightPlus" aria-label="Increase weight">+</button>
+              </div>
+            </div>
+
+            <div class="stepper">
+              <p class="muted">Reps</p>
+              <div class="stepper-controls">
+                <button class="round-btn" id="repsMinus" aria-label="Decrease reps">-</button>
+                <div class="step-value" id="repsValue">10</div>
+                <button class="round-btn" id="repsPlus" aria-label="Increase reps">+</button>
+              </div>
+            </div>
+
+            <button class="btn" id="saveSet">Save Set</button>
+          </article>
+
+          <div class="stack">
+            <article class="card">
+              <h3 class="panel-title">Saved sets</h3>
+              <div class="panel-body" id="setList">
+                <div class="empty">Save your first set to start the workout log.</div>
+              </div>
+            </article>
+            <article class="card">
+              <h3 class="panel-title">Workout Summary</h3>
+              <div class="panel-body summary-grid">
+                <div class="summary-card"><p class="muted">Total Sets</p><strong id="totalSets">0</strong></div>
+                <div class="summary-card"><p class="muted">Total Reps</p><strong id="totalReps">0</strong></div>
+                <div class="summary-card"><p class="muted">Total Volume</p><strong id="totalVolume">0 kg</strong></div>
+              </div>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="library" class="section">
+      <div class="shell">
+        <div class="page-head">
+          <div>
+            <span class="eyebrow">Exercise Library</span>
+            <h2 class="page-title">Find a lift</h2>
+            <p class="muted">A simple local library with dummy exercises.</p>
+          </div>
+          <input id="exerciseSearch" type="search" placeholder="Search exercises" aria-label="Search exercises">
+        </div>
+        <div class="library-grid" id="exerciseLibrary"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    Built as a plain HTML file. No server, no auth, no database.
+  </footer>
+
+  <script>
+    const exercises = [
+      { id: "bench-press", name: "Bench Press", muscle: "Chest", equipment: "Barbell" },
+      { id: "squat", name: "Squat", muscle: "Legs", equipment: "Barbell" },
+      { id: "deadlift", name: "Deadlift", muscle: "Posterior Chain", equipment: "Barbell" },
+      { id: "lat-pulldown", name: "Lat Pulldown", muscle: "Back", equipment: "Cable" },
+      { id: "leg-press", name: "Leg Press", muscle: "Legs", equipment: "Machine" },
+      { id: "shoulder-press", name: "Shoulder Press", muscle: "Shoulders", equipment: "Dumbbells" }
+    ];
+
+    const todayWorkout = [
+      { name: "Bench Press", sets: "4 x 8", status: "In progress" },
+      { name: "Lat Pulldown", sets: "3 x 10", status: "Next" },
+      { name: "Shoulder Press", sets: "3 x 8", status: "Planned" }
+    ];
+
+    const recentWorkouts = [
+      { name: "Upper Strength", date: "Today", sets: 18, volume: 8420 },
+      { name: "Leg Day", date: "Yesterday", sets: 22, volume: 12880 },
+      { name: "Pull Session", date: "Fri", sets: 16, volume: 6940 }
+    ];
+
+    let selectedExerciseId = exercises[0].id;
+    let weight = 80;
+    let reps = 10;
+    let savedSets = [];
+
+    const routeButtons = document.querySelectorAll("[data-route]");
+    const sections = document.querySelectorAll(".section");
+    const navLinks = document.querySelectorAll(".nav-link");
+
+    function showRoute(route) {
+      sections.forEach((section) => section.classList.toggle("active", section.id === route));
+      navLinks.forEach((link) => link.classList.toggle("active", link.dataset.route === route));
+      window.location.hash = route === "home" ? "" : route;
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    routeButtons.forEach((button) => {
+      button.addEventListener("click", (event) => {
+        event.preventDefault();
+        showRoute(button.dataset.route);
+      });
+    });
+
+    function renderDashboard() {
+      document.getElementById("todayWorkout").innerHTML = todayWorkout.map((item) => `
+        <div class="list-item">
+          <div><strong>${item.name}</strong><p class="muted">${item.sets}</p></div>
+          <span class="tag">${item.status}</span>
+        </div>
+      `).join("");
+
+      document.getElementById("recentWorkouts").innerHTML = recentWorkouts.map((item) => `
+        <div class="list-item">
+          <div><strong>${item.name}</strong><p class="muted">${item.date}</p></div>
+          <div style="text-align:right"><strong>${item.volume.toLocaleString()} kg</strong><p class="muted">${item.sets} sets</p></div>
+        </div>
+      `).join("");
+    }
+
+    function selectedExercise() {
+      return exercises.find((exercise) => exercise.id === selectedExerciseId) || exercises[0];
+    }
+
+    function renderWorkout() {
+      const exercise = selectedExercise();
+      document.getElementById("exerciseName").textContent = exercise.name;
+      document.getElementById("exerciseMeta").textContent = `${exercise.muscle} - ${exercise.equipment}`;
+      document.getElementById("currentSet").textContent = savedSets.length + 1;
+      document.getElementById("savedSetCount").textContent = savedSets.length;
+      document.getElementById("weightValue").textContent = weight;
+      document.getElementById("repsValue").textContent = reps;
+
+      const totalSets = savedSets.length;
+      const totalReps = savedSets.reduce((sum, set) => sum + set.reps, 0);
+      const totalVolume = savedSets.reduce((sum, set) => sum + set.weight * set.reps, 0);
+
+      document.getElementById("totalSets").textContent = totalSets;
+      document.getElementById("totalReps").textContent = totalReps;
+      document.getElementById("totalVolume").textContent = `${totalVolume.toLocaleString()} kg`;
+
+      document.getElementById("setList").innerHTML = savedSets.length
+        ? savedSets.map((set) => `
+          <div class="set-row">
+            <div><strong>Set ${set.setNumber}</strong><p class="muted">${set.exerciseName}</p></div>
+            <strong>${set.weight} x ${set.reps}</strong>
+          </div>
+        `).join("")
+        : `<div class="empty">Save your first set to start the workout log.</div>`;
+    }
+
+    function renderExerciseSelect() {
+      const select = document.getElementById("exerciseSelect");
+      select.innerHTML = exercises.map((exercise) => `
+        <option value="${exercise.id}">${exercise.name}</option>
+      `).join("");
+      select.value = selectedExerciseId;
+      select.addEventListener("change", () => {
+        selectedExerciseId = select.value;
+        renderWorkout();
+      });
+    }
+
+    function renderLibrary(query = "") {
+      const cleanQuery = query.trim().toLowerCase();
+      const filtered = exercises.filter((exercise) => {
+        return [exercise.name, exercise.muscle, exercise.equipment].some((value) =>
+          value.toLowerCase().includes(cleanQuery)
+        );
+      });
+
+      document.getElementById("exerciseLibrary").innerHTML = filtered.map((exercise) => `
+        <article class="exercise-card">
+          <div class="exercise-top">
+            <span class="icon">R</span>
+            <span class="tag">${exercise.equipment}</span>
+          </div>
+          <h3>${exercise.name}</h3>
+          <p class="muted">${exercise.muscle}</p>
+        </article>
+      `).join("") || `<div class="empty">No exercises found.</div>`;
+    }
+
+    document.getElementById("weightMinus").addEventListener("click", () => {
+      weight = Math.max(0, weight - 5);
+      renderWorkout();
+    });
+
+    document.getElementById("weightPlus").addEventListener("click", () => {
+      weight += 5;
+      renderWorkout();
+    });
+
+    document.getElementById("repsMinus").addEventListener("click", () => {
+      reps = Math.max(1, reps - 1);
+      renderWorkout();
+    });
+
+    document.getElementById("repsPlus").addEventListener("click", () => {
+      reps += 1;
+      renderWorkout();
+    });
+
+    document.getElementById("saveSet").addEventListener("click", () => {
+      savedSets.push({
+        setNumber: savedSets.length + 1,
+        exerciseName: selectedExercise().name,
+        weight,
+        reps
+      });
+      renderWorkout();
+    });
+
+    document.getElementById("exerciseSearch").addEventListener("input", (event) => {
+      renderLibrary(event.target.value);
+    });
+
+    renderDashboard();
+    renderExerciseSelect();
+    renderWorkout();
+    renderLibrary();
+
+    const initialRoute = window.location.hash.replace("#", "");
+    if (["dashboard", "workout", "library"].includes(initialRoute)) {
+      showRoute(initialRoute);
+    }
+  </script>
+</body>
+</html>
