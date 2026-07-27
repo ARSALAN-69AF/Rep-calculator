@@ -31,6 +31,7 @@
       margin: 0;
       min-height: 100vh;
       color: var(--text);
+      overflow-x: hidden;
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       background:
         radial-gradient(circle at 18% 8%, rgba(199, 255, 95, 0.14), transparent 28rem),
@@ -45,6 +46,87 @@
 
     button, input, select {
       font: inherit;
+    }
+
+    .physics-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: -3;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      opacity: 0.9;
+    }
+
+    .energy-grid {
+      position: fixed;
+      inset: -20%;
+      z-index: -2;
+      pointer-events: none;
+      background:
+        linear-gradient(rgba(199, 255, 95, 0.07) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(75, 211, 194, 0.055) 1px, transparent 1px);
+      background-size: 74px 74px;
+      mask-image: radial-gradient(circle at var(--cursor-x, 50%) var(--cursor-y, 35%), black, transparent 68%);
+      animation: gridDrift 13s linear infinite;
+    }
+
+    .gravity-plates {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .plate {
+      position: absolute;
+      width: 34vmin;
+      aspect-ratio: 1;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 36% 64% 54% 46%;
+      background:
+        radial-gradient(circle at 35% 24%, rgba(199, 255, 95, 0.18), transparent 32%),
+        linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.015));
+      filter: blur(0.2px);
+      transform: translate3d(0, 0, 0) rotate(0deg);
+      animation: plateOrbit 16s ease-in-out infinite;
+    }
+
+    .plate.one {
+      left: -9vmin;
+      top: 17vh;
+    }
+
+    .plate.two {
+      right: -8vmin;
+      top: 23vh;
+      width: 26vmin;
+      animation-duration: 19s;
+      animation-delay: -5s;
+    }
+
+    .plate.three {
+      left: 58vw;
+      bottom: -9vmin;
+      width: 30vmin;
+      animation-duration: 22s;
+      animation-delay: -9s;
+    }
+
+    .cursor-aura {
+      position: fixed;
+      left: 0;
+      top: 0;
+      z-index: 50;
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      pointer-events: none;
+      transform: translate3d(calc(var(--cursor-x, 50vw) - 110px), calc(var(--cursor-y, 50vh) - 110px), 0);
+      background: radial-gradient(circle, rgba(199, 255, 95, 0.18), rgba(75, 211, 194, 0.08) 34%, transparent 66%);
+      mix-blend-mode: screen;
+      transition: width 220ms ease, height 220ms ease;
     }
 
     .shell {
@@ -101,12 +183,15 @@
       background: transparent;
       border-radius: 999px;
       padding: 10px 14px;
-      transition: 180ms ease;
+      transform: translate3d(var(--mx, 0), var(--my, 0), 0) scale(var(--mag-scale, 1));
+      transform-origin: center;
+      transition: transform 360ms cubic-bezier(.2,.9,.2,1), background 180ms ease, color 180ms ease, box-shadow 220ms ease;
     }
 
     .nav-link:hover, .nav-link.active {
       color: var(--text);
       background: rgba(255, 255, 255, 0.08);
+      box-shadow: inset 0 0 0 1px rgba(199, 255, 95, 0.18), 0 0 24px rgba(199, 255, 95, 0.1);
     }
 
     .btn {
@@ -122,13 +207,15 @@
       background: var(--accent);
       font-weight: 800;
       cursor: pointer;
-      transition: transform 180ms ease, background 180ms ease, border-color 180ms ease;
+      transform: translate3d(var(--mx, 0), var(--my, 0), 0) scale(var(--mag-scale, 1));
+      transform-origin: center;
+      transition: transform 380ms cubic-bezier(.2,.9,.2,1), background 180ms ease, border-color 180ms ease, box-shadow 220ms ease;
       box-shadow: 0 0 40px rgba(199, 255, 95, 0.16);
     }
 
     .btn:hover {
-      transform: translateY(-2px);
       background: #d4ff81;
+      box-shadow: 0 0 55px rgba(199, 255, 95, 0.28);
     }
 
     .btn.secondary {
@@ -209,6 +296,20 @@
       animation: float 5s ease-in-out infinite;
     }
 
+    .device::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background: conic-gradient(from 90deg, transparent, rgba(199, 255, 95, 0.16), transparent, rgba(75, 211, 194, 0.12), transparent);
+      animation: reactorSpin 11s linear infinite;
+      opacity: 0.7;
+    }
+
+    .device > * {
+      position: relative;
+      z-index: 1;
+    }
+
     .device-row {
       display: flex;
       justify-content: space-between;
@@ -248,8 +349,9 @@
       transition: transform 200ms ease;
     }
 
-    .mock-item:hover, .card:hover, .exercise-card:hover {
-      transform: translateY(-3px);
+    .mock-item:hover, .card:hover, .metric:hover, .exercise-card:hover, .list-item:hover, .summary-card:hover {
+      border-color: rgba(199, 255, 95, 0.3);
+      box-shadow: 0 22px 70px rgba(0, 0, 0, 0.34), 0 0 34px rgba(199, 255, 95, 0.08);
     }
 
     .volume-panel {
@@ -289,7 +391,9 @@
 
     .card {
       padding: 26px;
-      transition: transform 200ms ease;
+      transform: translate3d(var(--mx, 0), var(--my, 0), 0) scale(var(--mag-scale, 1));
+      transform-origin: center;
+      transition: transform 420ms cubic-bezier(.2,.9,.2,1), border-color 220ms ease, box-shadow 220ms ease, background 220ms ease;
     }
 
     .icon {
@@ -355,6 +459,9 @@
       align-items: center;
       justify-content: space-between;
       padding: 24px;
+      transform: translate3d(var(--mx, 0), var(--my, 0), 0) scale(var(--mag-scale, 1));
+      transform-origin: center;
+      transition: transform 420ms cubic-bezier(.2,.9,.2,1), border-color 220ms ease, box-shadow 220ms ease;
     }
 
     .metric strong {
@@ -390,6 +497,9 @@
       border-radius: 18px;
       padding: 16px;
       background: rgba(255, 255, 255, 0.045);
+      transform: translate3d(var(--mx, 0), var(--my, 0), 0) scale(var(--mag-scale, 1));
+      transform-origin: center;
+      transition: transform 360ms cubic-bezier(.2,.9,.2,1), border-color 220ms ease, box-shadow 220ms ease;
     }
 
     .tag {
@@ -426,6 +536,14 @@
       color: var(--text);
       background: rgba(255, 255, 255, 0.075);
       padding: 0 16px;
+      transform: translate3d(var(--mx, 0), var(--my, 0), 0) scale(var(--mag-scale, 1));
+      transform-origin: center;
+      transition: transform 360ms cubic-bezier(.2,.9,.2,1), border-color 180ms ease, box-shadow 180ms ease;
+    }
+
+    select:hover, input:hover, select:focus, input:focus {
+      border-color: rgba(199, 255, 95, 0.38);
+      box-shadow: 0 0 28px rgba(199, 255, 95, 0.1);
     }
 
     option {
@@ -477,12 +595,14 @@
       background: rgba(255, 255, 255, 0.1);
       cursor: pointer;
       font-size: 22px;
-      transition: 180ms ease;
+      transform: translate3d(var(--mx, 0), var(--my, 0), 0) scale(var(--mag-scale, 1));
+      transform-origin: center;
+      transition: transform 320ms cubic-bezier(.2,.9,.2,1), background 180ms ease, box-shadow 180ms ease;
     }
 
     .round-btn:hover {
       background: rgba(255, 255, 255, 0.16);
-      transform: translateY(-1px);
+      box-shadow: 0 0 24px rgba(199, 255, 95, 0.14);
     }
 
     .step-value {
@@ -513,6 +633,9 @@
       justify-content: space-between;
       gap: 18px;
       padding: 16px;
+      transform: translate3d(var(--mx, 0), var(--my, 0), 0) scale(var(--mag-scale, 1));
+      transform-origin: center;
+      transition: transform 360ms cubic-bezier(.2,.9,.2,1), border-color 220ms ease, box-shadow 220ms ease;
       animation: rise 260ms ease both;
     }
 
@@ -525,6 +648,9 @@
     .summary-card {
       padding: 16px;
       background: rgba(0, 0, 0, 0.22);
+      transform: translate3d(var(--mx, 0), var(--my, 0), 0) scale(var(--mag-scale, 1));
+      transform-origin: center;
+      transition: transform 360ms cubic-bezier(.2,.9,.2,1), border-color 220ms ease, box-shadow 220ms ease;
     }
 
     .summary-card strong {
@@ -541,7 +667,9 @@
 
     .exercise-card {
       padding: 24px;
-      transition: transform 200ms ease;
+      transform: translate3d(var(--mx, 0), var(--my, 0), 0) scale(var(--mag-scale, 1));
+      transform-origin: center;
+      transition: transform 420ms cubic-bezier(.2,.9,.2,1), border-color 220ms ease, box-shadow 220ms ease;
     }
 
     .exercise-top {
@@ -575,6 +703,45 @@
       }
       50% {
         transform: translateY(-8px);
+      }
+    }
+
+    @keyframes gridDrift {
+      from {
+        transform: translate3d(0, 0, 0) rotate(0deg);
+      }
+      to {
+        transform: translate3d(74px, 74px, 0) rotate(1deg);
+      }
+    }
+
+    @keyframes plateOrbit {
+      0%, 100% {
+        transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+      }
+      35% {
+        transform: translate3d(28px, -36px, 0) rotate(42deg) scale(1.08);
+      }
+      70% {
+        transform: translate3d(-22px, 24px, 0) rotate(-28deg) scale(0.94);
+      }
+    }
+
+    @keyframes reactorSpin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+      }
+
+      .physics-canvas, .energy-grid, .gravity-plates, .cursor-aura {
+        display: none;
       }
     }
 
@@ -632,6 +799,15 @@
   </style>
 </head>
 <body>
+  <canvas class="physics-canvas" id="physicsCanvas" aria-hidden="true"></canvas>
+  <div class="energy-grid" aria-hidden="true"></div>
+  <div class="gravity-plates" aria-hidden="true">
+    <span class="plate one"></span>
+    <span class="plate two"></span>
+    <span class="plate three"></span>
+  </div>
+  <div class="cursor-aura" aria-hidden="true"></div>
+
   <header class="navbar">
     <div class="shell nav-inner">
       <a class="brand" href="#home" data-route="home">
@@ -827,6 +1003,25 @@
   </footer>
 
   <script>
+    const root = document.documentElement;
+    const pointer = {
+      x: window.innerWidth / 2,
+      y: window.innerHeight / 2,
+      active: false
+    };
+
+    window.addEventListener("pointermove", (event) => {
+      pointer.x = event.clientX;
+      pointer.y = event.clientY;
+      pointer.active = true;
+      root.style.setProperty("--cursor-x", `${event.clientX}px`);
+      root.style.setProperty("--cursor-y", `${event.clientY}px`);
+    });
+
+    window.addEventListener("pointerleave", () => {
+      pointer.active = false;
+    });
+
     const exercises = [
       { id: "bench-press", name: "Bench Press", muscle: "Chest", equipment: "Barbell" },
       { id: "squat", name: "Squat", muscle: "Legs", equipment: "Barbell" },
@@ -852,6 +1047,7 @@
     let weight = 80;
     let reps = 10;
     let savedSets = [];
+    const magneticElements = new WeakSet();
 
     const routeButtons = document.querySelectorAll("[data-route]");
     const sections = document.querySelectorAll(".section");
@@ -885,6 +1081,8 @@
           <div style="text-align:right"><strong>${item.volume.toLocaleString()} kg</strong><p class="muted">${item.sets} sets</p></div>
         </div>
       `).join("");
+
+      activateMagnetics();
     }
 
     function selectedExercise() {
@@ -916,6 +1114,8 @@
           </div>
         `).join("")
         : `<div class="empty">Save your first set to start the workout log.</div>`;
+
+      activateMagnetics();
     }
 
     function renderExerciseSelect() {
@@ -928,6 +1128,8 @@
         selectedExerciseId = select.value;
         renderWorkout();
       });
+
+      activateMagnetics();
     }
 
     function renderLibrary(query = "") {
@@ -948,6 +1150,129 @@
           <p class="muted">${exercise.muscle}</p>
         </article>
       `).join("") || `<div class="empty">No exercises found.</div>`;
+
+      activateMagnetics();
+    }
+
+    function activateMagnetics() {
+      const targets = document.querySelectorAll(".nav-link, .btn, .card, .metric, .exercise-card, .mock-item, .list-item, .summary-card, .set-row, select, input, .round-btn");
+
+      targets.forEach((target) => {
+        if (magneticElements.has(target)) {
+          return;
+        }
+
+        magneticElements.add(target);
+
+        target.addEventListener("pointermove", (event) => {
+          const rect = target.getBoundingClientRect();
+          const x = event.clientX - rect.left - rect.width / 2;
+          const y = event.clientY - rect.top - rect.height / 2;
+          const pull = target.classList.contains("card") || target.classList.contains("exercise-card") || target.classList.contains("metric") ? 0.08 : 0.16;
+          const scale = target.classList.contains("nav-link") ? 1.15 : target.classList.contains("round-btn") ? 1.18 : target.classList.contains("btn") ? 1.08 : 1.045;
+
+          target.style.setProperty("--mx", `${x * pull}px`);
+          target.style.setProperty("--my", `${y * pull}px`);
+          target.style.setProperty("--mag-scale", scale);
+        });
+
+        target.addEventListener("pointerleave", () => {
+          target.style.setProperty("--mx", "0px");
+          target.style.setProperty("--my", "0px");
+          target.style.setProperty("--mag-scale", "1");
+        });
+      });
+    }
+
+    function startPhysics() {
+      const canvas = document.getElementById("physicsCanvas");
+      const ctx = canvas.getContext("2d");
+      const motionAllowed = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      let width = 0;
+      let height = 0;
+      let particles = [];
+
+      if (!motionAllowed) {
+        return;
+      }
+
+      function resize() {
+        const ratio = Math.min(window.devicePixelRatio || 1, 2);
+        width = window.innerWidth;
+        height = window.innerHeight;
+        canvas.width = Math.floor(width * ratio);
+        canvas.height = Math.floor(height * ratio);
+        canvas.style.width = `${width}px`;
+        canvas.style.height = `${height}px`;
+        ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+
+        const count = Math.min(92, Math.max(42, Math.floor(width / 18)));
+        particles = Array.from({ length: count }, (_, index) => ({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          vx: (Math.random() - 0.5) * 0.65,
+          vy: (Math.random() - 0.5) * 0.65,
+          radius: 1.2 + Math.random() * 2.5,
+          hue: index % 3 === 0 ? "199, 255, 95" : index % 3 === 1 ? "75, 211, 194" : "255, 255, 255"
+        }));
+      }
+
+      function tick() {
+        ctx.clearRect(0, 0, width, height);
+
+        particles.forEach((particle, index) => {
+          const dx = pointer.x - particle.x;
+          const dy = pointer.y - particle.y;
+          const distance = Math.sqrt(dx * dx + dy * dy) || 1;
+          const force = pointer.active ? Math.min(0.9, 120 / distance) : 0;
+
+          if (distance < 240) {
+            particle.vx -= (dx / distance) * force * 0.045;
+            particle.vy -= (dy / distance) * force * 0.045;
+          }
+
+          particle.vx += Math.sin((Date.now() * 0.0005) + index) * 0.003;
+          particle.vy += Math.cos((Date.now() * 0.00045) + index) * 0.003;
+          particle.vx *= 0.986;
+          particle.vy *= 0.986;
+          particle.x += particle.vx;
+          particle.y += particle.vy;
+
+          if (particle.x < -20) particle.x = width + 20;
+          if (particle.x > width + 20) particle.x = -20;
+          if (particle.y < -20) particle.y = height + 20;
+          if (particle.y > height + 20) particle.y = -20;
+
+          particles.slice(index + 1).forEach((other) => {
+            const linkX = particle.x - other.x;
+            const linkY = particle.y - other.y;
+            const linkDistance = Math.sqrt(linkX * linkX + linkY * linkY);
+
+            if (linkDistance < 120) {
+              ctx.beginPath();
+              ctx.moveTo(particle.x, particle.y);
+              ctx.lineTo(other.x, other.y);
+              ctx.strokeStyle = `rgba(199, 255, 95, ${0.12 * (1 - linkDistance / 120)})`;
+              ctx.lineWidth = 1;
+              ctx.stroke();
+            }
+          });
+
+          ctx.beginPath();
+          ctx.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(${particle.hue}, 0.72)`;
+          ctx.shadowBlur = 18;
+          ctx.shadowColor = `rgba(${particle.hue}, 0.65)`;
+          ctx.fill();
+          ctx.shadowBlur = 0;
+        });
+
+        requestAnimationFrame(tick);
+      }
+
+      resize();
+      window.addEventListener("resize", resize);
+      tick();
     }
 
     document.getElementById("weightMinus").addEventListener("click", () => {
@@ -988,6 +1313,8 @@
     renderExerciseSelect();
     renderWorkout();
     renderLibrary();
+    activateMagnetics();
+    startPhysics();
 
     const initialRoute = window.location.hash.replace("#", "");
     if (["dashboard", "workout", "library"].includes(initialRoute)) {
