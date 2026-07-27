@@ -6,17 +6,17 @@
   <title>REPS | Workout Tracker</title>
   <style>
     :root {
-      --bg: #090909;
-      --panel: rgba(255, 255, 255, 0.065);
-      --panel-strong: rgba(255, 255, 255, 0.095);
-      --line: rgba(255, 255, 255, 0.12);
-      --text: #f7f7f7;
-      --muted: #a1a1aa;
-      --accent: #c7ff5f;
-      --accent-2: #4bd3c2;
-      --dark: #050505;
+      --bg: #f6f4ee;
+      --panel: rgba(255, 255, 255, 0.72);
+      --panel-strong: rgba(255, 255, 255, 0.92);
+      --line: rgba(12, 12, 12, 0.13);
+      --text: #101010;
+      --muted: #66645f;
+      --accent: #101010;
+      --accent-2: #8f8b82;
+      --dark: #ffffff;
       --radius: 26px;
-      --shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+      --shadow: 0 24px 80px rgba(22, 21, 18, 0.14);
     }
 
     * {
@@ -34,8 +34,8 @@
       overflow-x: hidden;
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       background:
-        radial-gradient(circle at 18% 8%, rgba(199, 255, 95, 0.14), transparent 28rem),
-        radial-gradient(circle at 86% 10%, rgba(75, 211, 194, 0.12), transparent 30rem),
+        radial-gradient(circle at 18% 8%, rgba(16, 16, 16, 0.08), transparent 28rem),
+        radial-gradient(circle at 86% 10%, rgba(143, 139, 130, 0.14), transparent 30rem),
         var(--bg);
     }
 
@@ -55,7 +55,22 @@
       width: 100%;
       height: 100%;
       pointer-events: none;
-      opacity: 0.9;
+      opacity: 0.72;
+    }
+
+    .video-field {
+      position: fixed;
+      inset: -20%;
+      z-index: -4;
+      pointer-events: none;
+      background:
+        linear-gradient(118deg, transparent 0%, rgba(255, 255, 255, 0.8) 17%, transparent 34%),
+        linear-gradient(62deg, transparent 12%, rgba(16, 16, 16, 0.09) 31%, transparent 52%),
+        radial-gradient(circle at 15% 20%, rgba(255, 255, 255, 0.95), transparent 28rem),
+        radial-gradient(circle at 86% 68%, rgba(14, 14, 14, 0.1), transparent 26rem);
+      filter: blur(18px);
+      opacity: 0.92;
+      animation: videoSweep 12s ease-in-out infinite alternate;
     }
 
     .energy-grid {
@@ -64,8 +79,8 @@
       z-index: -2;
       pointer-events: none;
       background:
-        linear-gradient(rgba(199, 255, 95, 0.07) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(75, 211, 194, 0.055) 1px, transparent 1px);
+        linear-gradient(rgba(16, 16, 16, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(16, 16, 16, 0.04) 1px, transparent 1px);
       background-size: 74px 74px;
       mask-image: radial-gradient(circle at var(--cursor-x, 50%) var(--cursor-y, 35%), black, transparent 68%);
       animation: gridDrift 13s linear infinite;
@@ -86,8 +101,8 @@
       border: 1px solid rgba(255, 255, 255, 0.1);
       border-radius: 36% 64% 54% 46%;
       background:
-        radial-gradient(circle at 35% 24%, rgba(199, 255, 95, 0.18), transparent 32%),
-        linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.015));
+        radial-gradient(circle at 35% 24%, rgba(255, 255, 255, 0.95), transparent 32%),
+        linear-gradient(135deg, rgba(20, 20, 20, 0.08), rgba(255, 255, 255, 0.25));
       filter: blur(0.2px);
       transform: translate3d(0, 0, 0) rotate(0deg);
       animation: plateOrbit 16s ease-in-out infinite;
@@ -124,8 +139,8 @@
       border-radius: 50%;
       pointer-events: none;
       transform: translate3d(calc(var(--cursor-x, 50vw) - 110px), calc(var(--cursor-y, 50vh) - 110px), 0);
-      background: radial-gradient(circle, rgba(199, 255, 95, 0.18), rgba(75, 211, 194, 0.08) 34%, transparent 66%);
-      mix-blend-mode: screen;
+      background: radial-gradient(circle, rgba(16, 16, 16, 0.09), rgba(255, 255, 255, 0.5) 34%, transparent 66%);
+      mix-blend-mode: multiply;
       transition: width 220ms ease, height 220ms ease;
     }
 
@@ -139,7 +154,7 @@
       top: 0;
       z-index: 20;
       border-bottom: 1px solid var(--line);
-      background: rgba(9, 9, 9, 0.78);
+      background: rgba(246, 244, 238, 0.82);
       backdrop-filter: blur(18px);
     }
 
@@ -167,7 +182,7 @@
       border-radius: 999px;
       color: var(--dark);
       background: var(--accent);
-      box-shadow: 0 0 36px rgba(199, 255, 95, 0.24);
+      box-shadow: 0 18px 44px rgba(16, 16, 16, 0.12);
     }
 
     .nav-links {
@@ -190,8 +205,8 @@
 
     .nav-link:hover, .nav-link.active {
       color: var(--text);
-      background: rgba(255, 255, 255, 0.08);
-      box-shadow: inset 0 0 0 1px rgba(199, 255, 95, 0.18), 0 0 24px rgba(199, 255, 95, 0.1);
+      background: rgba(16, 16, 16, 0.07);
+      box-shadow: inset 0 0 0 1px rgba(16, 16, 16, 0.1), 0 14px 28px rgba(16, 16, 16, 0.08);
     }
 
     .btn {
@@ -210,12 +225,12 @@
       transform: translate3d(var(--mx, 0), var(--my, 0), 0) scale(var(--mag-scale, 1));
       transform-origin: center;
       transition: transform 380ms cubic-bezier(.2,.9,.2,1), background 180ms ease, border-color 180ms ease, box-shadow 220ms ease;
-      box-shadow: 0 0 40px rgba(199, 255, 95, 0.16);
+      box-shadow: 0 20px 50px rgba(16, 16, 16, 0.16);
     }
 
     .btn:hover {
       background: #d4ff81;
-      box-shadow: 0 0 55px rgba(199, 255, 95, 0.28);
+      box-shadow: 0 24px 60px rgba(16, 16, 16, 0.22);
     }
 
     .btn.secondary {
@@ -247,11 +262,11 @@
     .eyebrow {
       display: inline-flex;
       width: fit-content;
-      border: 1px solid rgba(199, 255, 95, 0.28);
+      border: 1px solid rgba(16, 16, 16, 0.14);
       border-radius: 999px;
       padding: 8px 12px;
       color: var(--accent);
-      background: rgba(199, 255, 95, 0.08);
+      background: rgba(255, 255, 255, 0.72);
       font-size: 13px;
       font-weight: 700;
     }
@@ -270,7 +285,7 @@
     .hero-copy {
       margin-top: 22px;
       max-width: 580px;
-      color: #d4d4d8;
+      color: #3f3d39;
       font-size: clamp(18px, 2vw, 23px);
       line-height: 1.55;
     }
@@ -290,8 +305,8 @@
       border-radius: 38px;
       padding: 26px;
       background:
-        radial-gradient(circle at 38% 14%, rgba(199, 255, 95, 0.24), transparent 18rem),
-        linear-gradient(145deg, #171717, #050505 72%);
+        radial-gradient(circle at 38% 14%, rgba(255, 255, 255, 0.95), transparent 18rem),
+        linear-gradient(145deg, rgba(255, 255, 255, 0.96), rgba(218, 215, 205, 0.78) 72%);
       box-shadow: var(--shadow);
       animation: float 5s ease-in-out infinite;
     }
@@ -300,7 +315,7 @@
       content: "";
       position: absolute;
       inset: -40%;
-      background: conic-gradient(from 90deg, transparent, rgba(199, 255, 95, 0.16), transparent, rgba(75, 211, 194, 0.12), transparent);
+      background: conic-gradient(from 90deg, transparent, rgba(16, 16, 16, 0.1), transparent, rgba(255, 255, 255, 0.9), transparent);
       animation: reactorSpin 11s linear infinite;
       opacity: 0.7;
     }
@@ -350,8 +365,8 @@
     }
 
     .mock-item:hover, .card:hover, .metric:hover, .exercise-card:hover, .list-item:hover, .summary-card:hover {
-      border-color: rgba(199, 255, 95, 0.3);
-      box-shadow: 0 22px 70px rgba(0, 0, 0, 0.34), 0 0 34px rgba(199, 255, 95, 0.08);
+      border-color: rgba(16, 16, 16, 0.22);
+      box-shadow: 0 28px 70px rgba(18, 17, 15, 0.16), 0 0 34px rgba(255, 255, 255, 0.42);
     }
 
     .volume-panel {
@@ -402,8 +417,8 @@
       width: 48px;
       height: 48px;
       border-radius: 999px;
-      color: var(--accent);
-      background: rgba(199, 255, 95, 0.1);
+      color: var(--dark);
+      background: var(--accent);
       font-size: 22px;
     }
 
@@ -431,7 +446,7 @@
       border: 1px solid var(--line);
       border-radius: 34px;
       padding: 34px;
-      background: rgba(255, 255, 255, 0.06);
+      background: rgba(255, 255, 255, 0.72);
     }
 
     .page-head {
@@ -496,7 +511,7 @@
       border: 1px solid var(--line);
       border-radius: 18px;
       padding: 16px;
-      background: rgba(255, 255, 255, 0.045);
+      background: rgba(255, 255, 255, 0.62);
       transform: translate3d(var(--mx, 0), var(--my, 0), 0) scale(var(--mag-scale, 1));
       transform-origin: center;
       transition: transform 360ms cubic-bezier(.2,.9,.2,1), border-color 220ms ease, box-shadow 220ms ease;
@@ -534,7 +549,7 @@
       border-radius: 18px;
       outline: 0;
       color: var(--text);
-      background: rgba(255, 255, 255, 0.075);
+      background: rgba(255, 255, 255, 0.72);
       padding: 0 16px;
       transform: translate3d(var(--mx, 0), var(--my, 0), 0) scale(var(--mag-scale, 1));
       transform-origin: center;
@@ -542,20 +557,20 @@
     }
 
     select:hover, input:hover, select:focus, input:focus {
-      border-color: rgba(199, 255, 95, 0.38);
-      box-shadow: 0 0 28px rgba(199, 255, 95, 0.1);
+      border-color: rgba(16, 16, 16, 0.3);
+      box-shadow: 0 18px 36px rgba(16, 16, 16, 0.1);
     }
 
     option {
       color: var(--text);
-      background: #090909;
+      background: #f6f4ee;
     }
 
     .exercise-focus {
       border: 1px solid var(--line);
       border-radius: 28px;
       padding: 22px;
-      background: rgba(0, 0, 0, 0.24);
+      background: rgba(255, 255, 255, 0.7);
     }
 
     .exercise-focus h2 {
@@ -573,7 +588,7 @@
       border: 1px solid var(--line);
       border-radius: 26px;
       padding: 16px;
-      background: rgba(255, 255, 255, 0.045);
+      background: rgba(255, 255, 255, 0.62);
     }
 
     .stepper-controls {
@@ -592,7 +607,7 @@
       border: 0;
       border-radius: 999px;
       color: var(--text);
-      background: rgba(255, 255, 255, 0.1);
+      background: rgba(16, 16, 16, 0.08);
       cursor: pointer;
       font-size: 22px;
       transform: translate3d(var(--mx, 0), var(--my, 0), 0) scale(var(--mag-scale, 1));
@@ -602,7 +617,7 @@
 
     .round-btn:hover {
       background: rgba(255, 255, 255, 0.16);
-      box-shadow: 0 0 24px rgba(199, 255, 95, 0.14);
+      box-shadow: 0 16px 32px rgba(16, 16, 16, 0.12);
     }
 
     .step-value {
@@ -620,7 +635,7 @@
       display: grid;
       place-items: center;
       min-height: 220px;
-      border: 1px dashed rgba(255, 255, 255, 0.18);
+      border: 1px dashed rgba(16, 16, 16, 0.18);
       border-radius: 26px;
       color: var(--muted);
       text-align: center;
@@ -647,7 +662,7 @@
 
     .summary-card {
       padding: 16px;
-      background: rgba(0, 0, 0, 0.22);
+      background: rgba(255, 255, 255, 0.74);
       transform: translate3d(var(--mx, 0), var(--my, 0), 0) scale(var(--mag-scale, 1));
       transform-origin: center;
       transition: transform 360ms cubic-bezier(.2,.9,.2,1), border-color 220ms ease, box-shadow 220ms ease;
@@ -706,6 +721,18 @@
       }
     }
 
+    @keyframes videoSweep {
+      0% {
+        transform: translate3d(-4%, -3%, 0) rotate(-2deg) scale(1.02);
+      }
+      50% {
+        transform: translate3d(5%, 2%, 0) rotate(3deg) scale(1.08);
+      }
+      100% {
+        transform: translate3d(-1%, 5%, 0) rotate(-1deg) scale(1.04);
+      }
+    }
+
     @keyframes gridDrift {
       from {
         transform: translate3d(0, 0, 0) rotate(0deg);
@@ -740,7 +767,7 @@
         scroll-behavior: auto !important;
       }
 
-      .physics-canvas, .energy-grid, .gravity-plates, .cursor-aura {
+      .physics-canvas, .video-field, .energy-grid, .gravity-plates, .cursor-aura {
         display: none;
       }
     }
@@ -800,6 +827,7 @@
 </head>
 <body>
   <canvas class="physics-canvas" id="physicsCanvas" aria-hidden="true"></canvas>
+  <div class="video-field" aria-hidden="true"></div>
   <div class="energy-grid" aria-hidden="true"></div>
   <div class="gravity-plates" aria-hidden="true">
     <span class="plate one"></span>
@@ -830,7 +858,7 @@
         <div>
           <span class="eyebrow">Frontend-only workout tracker</span>
           <h1>REPS</h1>
-          <p class="hero-copy">A sharp local workout app for logging sets, reviewing volume, and keeping the next lift obvious.</p>
+          <p class="hero-copy">A clean training interface with live motion, smooth controls, and a bigger exercise library for fast workout logging.</p>
           <div class="hero-actions">
             <button class="btn" data-route="workout">Start Workout</button>
             <button class="btn secondary" data-route="dashboard">View Dashboard</button>
@@ -999,7 +1027,7 @@
   </main>
 
   <footer>
-    Built as a plain HTML file. No server, no auth, no database.
+    REPS runs as one clean static app. Fast, visual, and ready for your next session.
   </footer>
 
   <script>
@@ -1024,11 +1052,57 @@
 
     const exercises = [
       { id: "bench-press", name: "Bench Press", muscle: "Chest", equipment: "Barbell" },
+      { id: "incline-bench-press", name: "Incline Bench Press", muscle: "Upper Chest", equipment: "Barbell" },
+      { id: "dumbbell-bench-press", name: "Dumbbell Bench Press", muscle: "Chest", equipment: "Dumbbells" },
+      { id: "incline-dumbbell-press", name: "Incline Dumbbell Press", muscle: "Upper Chest", equipment: "Dumbbells" },
+      { id: "chest-fly", name: "Chest Fly", muscle: "Chest", equipment: "Machine" },
+      { id: "cable-crossover", name: "Cable Crossover", muscle: "Chest", equipment: "Cable" },
+      { id: "push-up", name: "Push-Up", muscle: "Chest", equipment: "Bodyweight" },
       { id: "squat", name: "Squat", muscle: "Legs", equipment: "Barbell" },
+      { id: "front-squat", name: "Front Squat", muscle: "Quads", equipment: "Barbell" },
+      { id: "goblet-squat", name: "Goblet Squat", muscle: "Legs", equipment: "Dumbbell" },
+      { id: "walking-lunge", name: "Walking Lunge", muscle: "Legs", equipment: "Dumbbells" },
+      { id: "bulgarian-split-squat", name: "Bulgarian Split Squat", muscle: "Legs", equipment: "Dumbbells" },
       { id: "deadlift", name: "Deadlift", muscle: "Posterior Chain", equipment: "Barbell" },
+      { id: "romanian-deadlift", name: "Romanian Deadlift", muscle: "Hamstrings", equipment: "Barbell" },
+      { id: "sumo-deadlift", name: "Sumo Deadlift", muscle: "Posterior Chain", equipment: "Barbell" },
+      { id: "hip-thrust", name: "Hip Thrust", muscle: "Glutes", equipment: "Barbell" },
       { id: "lat-pulldown", name: "Lat Pulldown", muscle: "Back", equipment: "Cable" },
+      { id: "pull-up", name: "Pull-Up", muscle: "Back", equipment: "Bodyweight" },
+      { id: "chin-up", name: "Chin-Up", muscle: "Back", equipment: "Bodyweight" },
+      { id: "barbell-row", name: "Barbell Row", muscle: "Back", equipment: "Barbell" },
+      { id: "seated-cable-row", name: "Seated Cable Row", muscle: "Back", equipment: "Cable" },
+      { id: "single-arm-row", name: "Single Arm Row", muscle: "Back", equipment: "Dumbbell" },
+      { id: "face-pull", name: "Face Pull", muscle: "Rear Delts", equipment: "Cable" },
       { id: "leg-press", name: "Leg Press", muscle: "Legs", equipment: "Machine" },
-      { id: "shoulder-press", name: "Shoulder Press", muscle: "Shoulders", equipment: "Dumbbells" }
+      { id: "leg-extension", name: "Leg Extension", muscle: "Quads", equipment: "Machine" },
+      { id: "lying-leg-curl", name: "Lying Leg Curl", muscle: "Hamstrings", equipment: "Machine" },
+      { id: "standing-calf-raise", name: "Standing Calf Raise", muscle: "Calves", equipment: "Machine" },
+      { id: "seated-calf-raise", name: "Seated Calf Raise", muscle: "Calves", equipment: "Machine" },
+      { id: "shoulder-press", name: "Shoulder Press", muscle: "Shoulders", equipment: "Dumbbells" },
+      { id: "overhead-press", name: "Overhead Press", muscle: "Shoulders", equipment: "Barbell" },
+      { id: "arnold-press", name: "Arnold Press", muscle: "Shoulders", equipment: "Dumbbells" },
+      { id: "lateral-raise", name: "Lateral Raise", muscle: "Side Delts", equipment: "Dumbbells" },
+      { id: "rear-delt-fly", name: "Rear Delt Fly", muscle: "Rear Delts", equipment: "Dumbbells" },
+      { id: "upright-row", name: "Upright Row", muscle: "Shoulders", equipment: "Cable" },
+      { id: "barbell-curl", name: "Barbell Curl", muscle: "Biceps", equipment: "Barbell" },
+      { id: "dumbbell-curl", name: "Dumbbell Curl", muscle: "Biceps", equipment: "Dumbbells" },
+      { id: "hammer-curl", name: "Hammer Curl", muscle: "Biceps", equipment: "Dumbbells" },
+      { id: "preacher-curl", name: "Preacher Curl", muscle: "Biceps", equipment: "Machine" },
+      { id: "triceps-pushdown", name: "Triceps Pushdown", muscle: "Triceps", equipment: "Cable" },
+      { id: "skull-crusher", name: "Skull Crusher", muscle: "Triceps", equipment: "EZ Bar" },
+      { id: "overhead-triceps-extension", name: "Overhead Triceps Extension", muscle: "Triceps", equipment: "Dumbbell" },
+      { id: "dip", name: "Dip", muscle: "Chest and Triceps", equipment: "Bodyweight" },
+      { id: "plank", name: "Plank", muscle: "Core", equipment: "Bodyweight" },
+      { id: "hanging-leg-raise", name: "Hanging Leg Raise", muscle: "Core", equipment: "Bodyweight" },
+      { id: "cable-crunch", name: "Cable Crunch", muscle: "Core", equipment: "Cable" },
+      { id: "russian-twist", name: "Russian Twist", muscle: "Core", equipment: "Medicine Ball" },
+      { id: "farmers-carry", name: "Farmers Carry", muscle: "Full Body", equipment: "Dumbbells" },
+      { id: "kettlebell-swing", name: "Kettlebell Swing", muscle: "Full Body", equipment: "Kettlebell" },
+      { id: "sled-push", name: "Sled Push", muscle: "Conditioning", equipment: "Sled" },
+      { id: "battle-ropes", name: "Battle Ropes", muscle: "Conditioning", equipment: "Ropes" },
+      { id: "treadmill-run", name: "Treadmill Run", muscle: "Cardio", equipment: "Treadmill" },
+      { id: "rowing-machine", name: "Rowing Machine", muscle: "Cardio", equipment: "Machine" }
     ];
 
     const todayWorkout = [
@@ -1213,7 +1287,7 @@
           vx: (Math.random() - 0.5) * 0.65,
           vy: (Math.random() - 0.5) * 0.65,
           radius: 1.2 + Math.random() * 2.5,
-          hue: index % 3 === 0 ? "199, 255, 95" : index % 3 === 1 ? "75, 211, 194" : "255, 255, 255"
+          hue: index % 3 === 0 ? "16, 16, 16" : index % 3 === 1 ? "120, 116, 108" : "255, 255, 255"
         }));
       }
 
@@ -1252,7 +1326,7 @@
               ctx.beginPath();
               ctx.moveTo(particle.x, particle.y);
               ctx.lineTo(other.x, other.y);
-              ctx.strokeStyle = `rgba(199, 255, 95, ${0.12 * (1 - linkDistance / 120)})`;
+              ctx.strokeStyle = `rgba(16, 16, 16, ${0.1 * (1 - linkDistance / 120)})`;
               ctx.lineWidth = 1;
               ctx.stroke();
             }
