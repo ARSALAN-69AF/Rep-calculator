@@ -99,6 +99,7 @@
       z-index: 0;
       overflow: hidden;
       pointer-events: none;
+      perspective: 900px;
     }
 
     .plate {
@@ -820,29 +821,54 @@
       }
 
       .video-field {
-        inset: -10%;
-        filter: none;
-        opacity: 0.72;
-        animation-duration: 20s;
+        inset: -18%;
+        filter: blur(8px);
+        opacity: 0.86;
+        animation-duration: 18s;
       }
 
       .energy-grid {
-        display: none;
+        display: block;
+        opacity: 0.24;
+        mask-image: linear-gradient(to bottom, black, transparent 72%);
+        animation-duration: 24s;
       }
 
       .gravity-plates {
-        opacity: 0.28;
+        opacity: 0.62;
       }
 
       .plate {
-        animation: none;
         filter: none;
+        transform-style: preserve-3d;
+        animation: mobilePlateFloat 18s ease-in-out infinite;
+        box-shadow: inset 0 0 42px rgba(255, 255, 255, 0.58), 0 24px 52px rgba(20, 20, 20, 0.09);
+      }
+
+      .plate.one {
+        left: -18vmin;
+        top: 12vh;
+        width: 46vmin;
+      }
+
+      .plate.two {
+        right: -20vmin;
+        top: 44vh;
+        width: 42vmin;
+        animation-delay: -6s;
+      }
+
+      .plate.three {
+        left: 44vw;
+        bottom: -12vmin;
+        width: 38vmin;
+        animation-delay: -11s;
       }
 
       .navbar,
       .mock-item,
       .volume-panel {
-        backdrop-filter: none;
+        backdrop-filter: blur(9px);
       }
 
       .card,
@@ -891,6 +917,15 @@
 
       .section {
         padding-top: 28px;
+      }
+    }
+
+    @keyframes mobilePlateFloat {
+      0%, 100% {
+        transform: translate3d(0, 0, 0) rotateX(58deg) rotateZ(-12deg) scale(1);
+      }
+      50% {
+        transform: translate3d(12px, -18px, 0) rotateX(64deg) rotateZ(16deg) scale(1.04);
       }
     }
   </style>
@@ -1208,7 +1243,7 @@
       sections.forEach((section) => section.classList.toggle("active", section.id === route));
       navLinks.forEach((link) => link.classList.toggle("active", link.dataset.route === route));
       window.location.hash = route === "home" ? "" : route;
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      window.scrollTo({ top: 0, behavior: mobileOptimized ? "auto" : "smooth" });
     }
 
     routeButtons.forEach((button) => {
