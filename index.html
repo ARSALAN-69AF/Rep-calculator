@@ -814,6 +814,54 @@
     }
 
     @media (max-width: 640px) {
+      .physics-canvas,
+      .cursor-aura {
+        display: none;
+      }
+
+      .video-field {
+        inset: -10%;
+        filter: none;
+        opacity: 0.72;
+        animation-duration: 20s;
+      }
+
+      .energy-grid {
+        display: none;
+      }
+
+      .gravity-plates {
+        opacity: 0.28;
+      }
+
+      .plate {
+        animation: none;
+        filter: none;
+      }
+
+      .navbar,
+      .mock-item,
+      .volume-panel {
+        backdrop-filter: none;
+      }
+
+      .card,
+      .metric,
+      .exercise-card,
+      .list-item,
+      .summary-card,
+      .set-row,
+      .btn,
+      .nav-link,
+      .round-btn,
+      select,
+      input {
+        --mx: 0px !important;
+        --my: 0px !important;
+        --mag-scale: 1 !important;
+        transition-duration: 180ms;
+      }
+
       .nav-inner {
         align-items: stretch;
         flex-direction: column;
@@ -1054,6 +1102,9 @@
 
   <script>
     const root = document.documentElement;
+    const touchDevice = window.matchMedia("(hover: none), (pointer: coarse)").matches;
+    const smallScreen = window.matchMedia("(max-width: 700px)").matches;
+    const mobileOptimized = touchDevice || smallScreen;
     const pointer = {
       x: window.innerWidth / 2,
       y: window.innerHeight / 2,
@@ -1062,17 +1113,19 @@
       active: false
     };
 
-    window.addEventListener("pointermove", (event) => {
-      pointer.x = event.clientX;
-      pointer.y = event.clientY;
-      pointer.active = true;
-      root.style.setProperty("--cursor-x", `${event.clientX}px`);
-      root.style.setProperty("--cursor-y", `${event.clientY}px`);
-    });
+    if (!mobileOptimized) {
+      window.addEventListener("pointermove", (event) => {
+        pointer.x = event.clientX;
+        pointer.y = event.clientY;
+        pointer.active = true;
+        root.style.setProperty("--cursor-x", `${event.clientX}px`);
+        root.style.setProperty("--cursor-y", `${event.clientY}px`);
+      });
 
-    window.addEventListener("pointerleave", () => {
-      pointer.active = false;
-    });
+      window.addEventListener("pointerleave", () => {
+        pointer.active = false;
+      });
+    }
 
     const exercises = [
       { id: "bench-press", name: "Bench Press", muscle: "Chest", equipment: "Barbell" },
@@ -1253,6 +1306,10 @@
     }
 
     function activateMagnetics() {
+      if (mobileOptimized) {
+        return;
+      }
+
       const targets = document.querySelectorAll(".nav-link, .btn, .card, .metric, .exercise-card, .mock-item, .list-item, .summary-card, .set-row, select, input, .round-btn");
 
       targets.forEach((target) => {
@@ -1290,7 +1347,8 @@
       let height = 0;
       let particles = [];
 
-      if (!motionAllowed) {
+      if (!motionAllowed || mobileOptimized) {
+        canvas.remove();
         return;
       }
 
